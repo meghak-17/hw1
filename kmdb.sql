@@ -121,19 +121,129 @@
 -- TODO!
 
 -- Prints a header for the movies output
-.print "Movies"
-.print "======"
-.print ""
+
 
 -- The SQL statement for the movies output
 -- TODO!
 
 -- Prints a header for the cast output
+
+
+
+-- The SQL statement for the cast output
+-- TODO!
+
+DROP TABLE IF EXISTS movie_cast;
+DROP TABLE IF EXISTS actor;
+DROP TABLE IF EXISTS movie;
+DROP TABLE IF EXISTS studio;
+
+CREATE TABLE studio (
+    studio_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL ) ; 
+
+CREATE TABLE movie (
+    movie_id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    year_released INTEGER NOT NULL,
+    mpaa_rating TEXT NOT NULL,
+    studio_id INTEGER NOT NULL,
+    FOREIGN KEY (studio_id) REFERENCES studio(studio_id)
+);
+
+CREATE TABLE actor (
+    actor_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE movie_cast (
+    movie_cast_id INTEGER PRIMARY KEY,
+    movie_id INTEGER NOT NULL,
+    actor_id INTEGER NOT NULL,
+    character_name TEXT NOT NULL,
+    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+    FOREIGN KEY (actor_id) REFERENCES actor(actor_id)
+);
+
+INSERT INTO studio (studio_id, name) VALUES
+(1, 'Warner Bros.');
+
+INSERT INTO movie (movie_id, title, year_released, mpaa_rating, studio_id) VALUES
+(1, 'Batman Begins', 2005, 'PG-13', 1),
+(2, 'The Dark Knight', 2008, 'PG-13', 1),
+(3, 'The Dark Knight Rises', 2012, 'PG-13', 1);
+
+INSERT INTO actor (actor_id, name) VALUES
+(1, 'Christian Bale'),
+(2, 'Michael Caine'),
+(3, 'Liam Neeson'),
+(4, 'Katie Holmes'),
+(5, 'Gary Oldman'),
+(6, 'Heath Ledger'),
+(7, 'Aaron Eckhart'),
+(8, 'Maggie Gyllenhaal'),
+(9, 'Tom Hardy'),
+(10, 'Joseph Gordon-Levitt'),
+(11, 'Anne Hathaway');
+
+INSERT INTO movie_cast (movie_cast_id, movie_id, actor_id, character_name) VALUES
+(1, 1, 1, 'Bruce Wayne'),
+(2, 1, 2, 'Alfred'),
+(3, 1, 3, 'Ra''s Al Ghul'),
+(4, 1, 4, 'Rachel Dawes'),
+(5, 1, 5, 'Commissioner Gordon'),
+(6, 2, 1, 'Bruce Wayne'),
+(7, 2, 6, 'Joker'),
+(8, 2, 7, 'Harvey Dent'),
+(9, 2, 2, 'Alfred'),
+(10, 2, 8, 'Rachel Dawes'),
+(11, 3, 1, 'Bruce Wayne'),
+(12, 3, 5, 'Commissioner Gordon'),
+(13, 3, 9, 'Bane'),
+(14, 3, 10, 'John Blake'),
+(15, 3, 11, 'Selina Kyle');
+
+.print "Movies"
+.print "======"
+.print ""
+
+SELECT m.title, m.year_released, m.mpaa_rating, s.name AS studio_name
+FROM movie m
+JOIN studio s ON m.studio_id = s.studio_id;
+
+
+.print ""
+.print "Movies by Warner Bros."
+.print "======================"
+.print ""
+
+SELECT m.title, m.year_released, m.mpaa_rating
+FROM movie m
+JOIN studio s ON m.studio_id = s.studio_id
+WHERE s.name = 'Warner Bros.';
+
+
 .print ""
 .print "Top Cast"
 .print "========"
 .print ""
 
+SELECT m.title, a.name AS actor_name, mc.character_name
+FROM movie_cast mc
+JOIN movie m ON mc.movie_id = m.movie_id
+JOIN actor a ON mc.actor_id = a.actor_id
+ORDER BY m.title, mc.movie_cast_id;
 
--- The SQL statement for the cast output
--- TODO!
+
+.print ""
+.print "Movies Featuring Christian Bale"
+.print "==============================="
+.print ""
+
+SELECT a.name AS actor_name, m.title AS movie_title, mc.character_name
+FROM movie_cast mc
+JOIN movie m ON mc.movie_id = m.movie_id
+JOIN actor a ON mc.actor_id = a.actor_id
+WHERE a.name = 'Christian Bale';
+
+
